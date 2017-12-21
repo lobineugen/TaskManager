@@ -3,7 +3,6 @@ package com.lobin.eugene.View;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
 
 public class View extends JFrame {
     private Container container = this.getContentPane();
@@ -14,7 +13,7 @@ public class View extends JFrame {
 
     public View() {
         super("Task Manager");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(500, 500);
         this.setLocationRelativeTo(null);
         this.setResizable(false);

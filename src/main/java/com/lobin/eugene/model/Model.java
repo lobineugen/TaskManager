@@ -1,6 +1,5 @@
 package com.lobin.eugene.model;
 
-
 import java.util.Date;
 
 public class Model {

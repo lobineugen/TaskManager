@@ -2,6 +2,7 @@ package com.lobin.eugene.View;
 
 import javax.swing.*;
 
+
 public class StartPanel {
     private JPanel startPanel = new JPanel();
     private GroupLayout glStart = new GroupLayout(startPanel);
