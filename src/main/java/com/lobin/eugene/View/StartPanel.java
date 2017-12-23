@@ -4,18 +4,20 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusListener;
 
 public class StartPanel {
     private JPanel startPanel = new JPanel();
     private JButton bCreateNewTask = new JButton("Create new task");
     private JButton bEdit = new JButton("Edit");
-    private Object[] oNonRep = new Object[]{"Title", "Date", "Active", "HashCode"};
-    private Object[] oRep = new Object[]{"Title", "Start time", "End time", "Interval", "Active", "HashCode"};
+    private Object[] oNonRep = new Object[]{"Title", "Date", "Active"};
+    private Object[] oRep = new Object[]{"Title", "Start time", "End time", "Interval", "Active"};
     private JTable jTableRep = createTable(oRep);
     private JTable jTableNonRep = createTable(oNonRep);
+    private JButton bRemove = new JButton("Remove");
 
     StartPanel() {
+        jTableRep.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jTableNonRep.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         GroupLayout glStart = new GroupLayout(startPanel);
         JScrollPane spNonRep = new JScrollPane(jTableNonRep, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         JScrollPane spRep = new JScrollPane(jTableRep, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -28,7 +30,8 @@ public class StartPanel {
                                 .addComponent(spNonRep)
                                 .addGroup(glStart.createParallelGroup()
                                         .addComponent(bCreateNewTask)
-                                        .addComponent(bEdit)))
+                                        .addComponent(bEdit)
+                                        .addComponent(bRemove)))
                         .addComponent(spRep)));
 
         glStart.setVerticalGroup(glStart.createSequentialGroup()
@@ -36,10 +39,11 @@ public class StartPanel {
                         .addComponent(spNonRep)
                         .addGroup(glStart.createSequentialGroup()
                                 .addComponent(bCreateNewTask)
-                                .addComponent(bEdit)))
+                                .addComponent(bEdit)
+                                .addComponent(bRemove)))
                 .addComponent(spRep)
         );
-        glStart.linkSize(SwingConstants.HORIZONTAL, bCreateNewTask, bEdit);
+        glStart.linkSize(SwingConstants.HORIZONTAL, bCreateNewTask, bEdit, bRemove);
 
     }
 
@@ -55,12 +59,8 @@ public class StartPanel {
         return jTableNonRep;
     }
 
-    public void addTableNonRepFocusListener(FocusListener listener) {
-        jTableNonRep.addFocusListener(listener);
-    }
-
-    public void addTableRepFocusListener(FocusListener listener) {
-        jTableRep.addFocusListener(listener);
+    public void addRemoveTaskListener(ActionListener listener) {
+        bRemove.addActionListener(listener);
     }
 
     public void addEditActionListener(ActionListener listener) {

@@ -1,6 +1,7 @@
 package com.lobin.eugene.model;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 public class Model {
@@ -8,13 +9,17 @@ public class Model {
     private File file = new File("data.bin");
 
     public void loadFromFile() {
-        TaskIO.readBinary(taskList, file);
-//        for(Object q :taskList){
-//            System.out.println(q.toString());
-//        }
+        taskList.clear();
+        try {
+            file.createNewFile();
+            TaskIO.readBinary(taskList, file);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
     }
 
-    public void writeInFile() {
+    private void writeInFile() {
         TaskIO.writeBinary(taskList, file);
     }
 
@@ -34,5 +39,34 @@ public class Model {
 
     public ArrayTaskList getTaskList() {
         return taskList;
+    }
+
+    public boolean editTask(Task taskForCopm, Task taskWithNewIfno) {
+        for (int i = 0; i < taskList.size(); i++) {
+            if (taskForCopm.equals(taskList.getTask(i))) {
+                taskList.getTask(i).setTitle(taskWithNewIfno.getTitle());
+                taskList.getTask(i).setActive(taskWithNewIfno.isActive());
+                if (taskForCopm.getRepeatInterval() > 0) {
+                    try {
+                        taskList.getTask(i).setTime(taskWithNewIfno.getStartTime(), taskWithNewIfno.getEndTime(), taskWithNewIfno.getRepeatInterval());
+                    } catch (TimeException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    taskList.getTask(i).setTime(taskWithNewIfno.getTime());
+                }
+                writeInFile();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean removeTask(Task task) {
+        if (taskList.remove(task)) {
+            writeInFile();
+            return true;
+        }
+        return false;
     }
 }

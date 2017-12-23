@@ -8,8 +8,8 @@ import java.util.Objects;
 /**
  * Class for create arrayList with task.
  *
- * @version 1.0 11 Oct 2017
  * @author Eugene Lobin
+ * @version 1.0 11 Oct 2017
  */
 
 public class ArrayTaskList extends TaskList implements Cloneable {
@@ -18,9 +18,9 @@ public class ArrayTaskList extends TaskList implements Cloneable {
     private int count = 0;
 
 
-
     /**
      * add
+     *
      * @param task to the task list
      */
     @Override
@@ -34,7 +34,7 @@ public class ArrayTaskList extends TaskList implements Cloneable {
             }
         } else {
             if (count < arrayTask.length) {
-                arrayTask[count++]  = task;
+                arrayTask[count++] = task;
             } else {
                 int size = arrayTask.length + arrayTask.length / 2;
                 arrayTask = Arrays.copyOf(arrayTask, size);
@@ -44,8 +44,8 @@ public class ArrayTaskList extends TaskList implements Cloneable {
     }
 
     /**
-     * @return arrayList without elements task
      * @param task (delete task from task list)
+     * @return arrayList without elements task
      */
     @Override
     public boolean remove(Task task) {
@@ -53,7 +53,7 @@ public class ArrayTaskList extends TaskList implements Cloneable {
         for (int i = 0; i < size; i++) {
             if (Objects.equals(arrayTask[i], task)) {
                 if (i != size - 1) {
-                    System.arraycopy(arrayTask , i + 1 , arrayTask , i ,
+                    System.arraycopy(arrayTask, i + 1, arrayTask, i,
                             size - i - 1);
                 }
                 arrayTask[count - 1] = null;
@@ -73,8 +73,8 @@ public class ArrayTaskList extends TaskList implements Cloneable {
     }
 
     /**
-     * @return task at a given index
      * @param index (return task from task list with index)
+     * @return task at a given index
      */
     @Override
     public Task getTask(int index) {
@@ -99,6 +99,15 @@ public class ArrayTaskList extends TaskList implements Cloneable {
         int result = Arrays.hashCode(arrayTask);
         result = hashNumber * result + count;
         return result;
+    }
+
+    public void clear() {
+
+        // clear to let GC do its work
+        for (int i = 0; i < count; i++)
+            arrayTask[i] = null;
+
+        count = 0;
     }
 
     @Override
@@ -126,6 +135,7 @@ public class ArrayTaskList extends TaskList implements Cloneable {
     /**
      * Returns an iterator over the elements in this list in proper sequence.
      * The returned iterator is fail-fast.
+     *
      * @return an iterator over the elements in this list in proper sequence
      */
     public Iterator iterator() {

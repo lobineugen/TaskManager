@@ -9,6 +9,7 @@ public class View extends JFrame {
 
     private StartPanel startPanel = new StartPanel();
     private CreateTaskPanel createTaskPanel = new CreateTaskPanel();
+    private EditPanel editPanel = new EditPanel();
 
     public View() {
         super("Task Manager");
@@ -19,6 +20,7 @@ public class View extends JFrame {
         container.setLayout(cardLayout);
         container.add("Start form", startPanel.getStartPanel());
         container.add("Create task", createTaskPanel.getCreateTaskPanel());
+        container.add("Edit task", editPanel.getEditPanel());
     }
 
     public CardLayout getCardLayout() {
@@ -35,5 +37,9 @@ public class View extends JFrame {
 
     public StartPanel getStartPanel() {
         return startPanel;
+    }
+
+    public EditPanel getEditPanel() {
+        return editPanel;
     }
 }

@@ -3,6 +3,7 @@ package com.lobin.eugene.View;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
+import java.util.Date;
 
 public class CreateTaskPanel {
     private JPanel createTaskPanel = new JPanel();
@@ -70,11 +71,11 @@ public class CreateTaskPanel {
         return pNonRepTask;
     }
 
-    public JTextField getTaskTitleOne() {
+    public String getTaskTitleOne() {
         return nonRepTaskPanel.getTitle();
     }
 
-    public JTextField getTaskTitleTwo() {
+    public String getTaskTitleTwo() {
         return repTaskPanel.getTitle();
     }
 
@@ -82,27 +83,27 @@ public class CreateTaskPanel {
         return bgSelectTaskType.getSelection().getActionCommand().equals("Repeatable");
     }
 
-    public JSpinner getDateTime() {
+    public Date getDateTime() {
         return nonRepTaskPanel.getDate();
     }
 
-    public JSpinner getStartTime() {
+    public Date getStartTime() {
         return repTaskPanel.getStartTime();
     }
 
-    public JSpinner getEndTIme() {
+    public Date getEndTime() {
         return repTaskPanel.getEndTime();
     }
 
-    public JTextField getInterval() {
+    public int getInterval() {
         return repTaskPanel.getInterval();
     }
 
-    public JRadioButton getActiveOne() {
+    public boolean getActiveOne() {
         return nonRepTaskPanel.getActive();
     }
 
-    public JRadioButton getActiveTwo() {
+    public boolean getActiveTwo() {
         return repTaskPanel.getActive();
     }
 

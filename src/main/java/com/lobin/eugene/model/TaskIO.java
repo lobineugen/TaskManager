@@ -9,8 +9,8 @@ import java.util.Date;
  * Class for binary input/output task and text input/output
  * task in threads and files
  *
- * @version 1.0 9 Dec 2017
  * @author Eugene Lobin
+ * @version 1.0 9 Dec 2017
  */
 
 public class TaskIO {
@@ -21,8 +21,7 @@ public class TaskIO {
 
     /**
      * @param tasks - task list with tasks
-     * @param out - output thread
-     *
+     * @param out   - output thread
      * @throw IOException if stream to out cannot be written to or closed.
      * Write tasks in output thread in binary format
      */
@@ -42,7 +41,7 @@ public class TaskIO {
                     data.writeLong(task.getTime().getTime());
                 }
             }
-        }catch (IOException ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
@@ -50,7 +49,7 @@ public class TaskIO {
 
     /**
      * @param tasks - task list with tasks
-     * @param in - input thread
+     * @param in    - input thread
      * @throw IOException if stream to in cannot be read to or closed.
      * Read tasks from input thread in binary format
      */
@@ -87,7 +86,7 @@ public class TaskIO {
 
     /**
      * @param tasks - task list with tasks
-     * @param file - file for writing
+     * @param file  - file for writing
      * @throw IOException if stream to file cannot be written to or closed.
      * Write task in file in binary format
      */
@@ -104,14 +103,16 @@ public class TaskIO {
 
     /**
      * @param tasks - task list with tasks
-     * @param file - file for reading
+     * @param file  - file for reading
      * @throw IOException if stream to file cannot be read to or closed.
      * Write task in file in binary format
      */
     public static void readBinary(TaskList tasks, File file) {
         try (DataInputStream data = new DataInputStream(
                 new FileInputStream(file))) {
-            read(tasks, data);
+            if (file.length() != 0) {
+                read(tasks, data);
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -121,7 +122,7 @@ public class TaskIO {
 
     /**
      * @param tasks - task list with tasks
-     * @param out - output thread
+     * @param out   - output thread
      * @throw IOException if stream to out cannot be written to or closed.
      * Write tasks in output thread in text format
      */
@@ -226,14 +227,13 @@ public class TaskIO {
 
     /**
      * @param tasks - task list with tasks
-     * @param in - input thread
-     *
-     * @throw IOException if stream to in cannot be read to or closed.
+     * @param in    - input thread
      * @throws ParseException if cannot be parse from string in
-     * Read tasks from input thread in text format
+     *                        Read tasks from input thread in text format
+     * @throw IOException if stream to in cannot be read to or closed.
      */
     public static void read(TaskList tasks, Reader in)
-            throws  ParseException {
+            throws ParseException {
         try (BufferedReader bufferedReader = new BufferedReader(in)) {
             SimpleDateFormat dateFormat = new SimpleDateFormat();
             dateFormat.applyPattern("[yyyy-MM-dd HH:mm:ss.SSS]");
@@ -274,7 +274,7 @@ public class TaskIO {
         s = s.substring(s.lastIndexOf("["), s.lastIndexOf("]"));
         StringBuilder sb = new StringBuilder();
         int[] array = {-1, -1, -1, -1};
-        int[] afterArray = {0, 0, 0,  0};
+        int[] afterArray = {0, 0, 0, 0};
         int count = 0;
         int i = 0;
         int result = 0;
@@ -308,10 +308,9 @@ public class TaskIO {
 
     /**
      * @param tasks - task list with tasks
-     * @param file - file for writing
-     *
+     * @param file  - file for writing
      * @throw IOException if stream to file cannot be written to or closed.
-     *
+     * <p>
      * Write task in file in binary text
      */
     public static void writeText(TaskList tasks, File file) {
@@ -324,11 +323,10 @@ public class TaskIO {
 
     /**
      * @param tasks - task list with tasks
-     * @param file - file for reading
-     *
-     * @throw  IOException if stream to file cannot be read to or closed.
+     * @param file  - file for reading
      * @throws ParseException if cannot be parse from string in int
-     * Write task in file in text format
+     *                        Write task in file in text format
+     * @throw IOException if stream to file cannot be read to or closed.
      */
     public static void readText(TaskList tasks, File file)
             throws ParseException {
