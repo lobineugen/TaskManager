@@ -2,7 +2,6 @@ package com.lobin.eugene.View;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class View extends JFrame {
     private Container container = this.getContentPane();
@@ -22,10 +21,6 @@ public class View extends JFrame {
         container.add("Create task", createTaskPanel.getCreateTaskPanel());
     }
 
-    public void addCreateTaskListener(ActionListener listener) {
-        startPanel.getCreateNewTask().addActionListener(listener);
-    }
-
     public CardLayout getCardLayout() {
         return cardLayout;
     }
@@ -36,5 +31,9 @@ public class View extends JFrame {
 
     public CreateTaskPanel getCreateTaskPanel() {
         return createTaskPanel;
+    }
+
+    public StartPanel getStartPanel() {
+        return startPanel;
     }
 }
