@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author Eugene Lobin
  */
 
-public abstract class TaskList implements Iterable, Serializable {
+public abstract class TaskList implements Iterable<Task>, Serializable {
     /**
      * add
      * @param task to the task list

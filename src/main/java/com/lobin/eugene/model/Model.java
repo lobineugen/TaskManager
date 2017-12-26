@@ -3,9 +3,12 @@ package com.lobin.eugene.model;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.SortedMap;
 
 public class Model {
-    private ArrayTaskList taskList = new ArrayTaskList();
+    private ArrayTaskList<Task> taskList = new ArrayTaskList<>();
     private File file = new File("data.bin");
 
     public void loadFromFile() {
@@ -41,19 +44,19 @@ public class Model {
         return taskList;
     }
 
-    public boolean editTask(Task taskForCopm, Task taskWithNewIfno) {
+    public boolean editTask(Task taskForCopm, Task taskWithNewInfo) {
         for (int i = 0; i < taskList.size(); i++) {
             if (taskForCopm.equals(taskList.getTask(i))) {
-                taskList.getTask(i).setTitle(taskWithNewIfno.getTitle());
-                taskList.getTask(i).setActive(taskWithNewIfno.isActive());
+                taskList.getTask(i).setTitle(taskWithNewInfo.getTitle());
+                taskList.getTask(i).setActive(taskWithNewInfo.isActive());
                 if (taskForCopm.getRepeatInterval() > 0) {
                     try {
-                        taskList.getTask(i).setTime(taskWithNewIfno.getStartTime(), taskWithNewIfno.getEndTime(), taskWithNewIfno.getRepeatInterval());
+                        taskList.getTask(i).setTime(taskWithNewInfo.getStartTime(), taskWithNewInfo.getEndTime(), taskWithNewInfo.getRepeatInterval());
                     } catch (TimeException ex) {
                         ex.printStackTrace();
                     }
                 } else {
-                    taskList.getTask(i).setTime(taskWithNewIfno.getTime());
+                    taskList.getTask(i).setTime(taskWithNewInfo.getTime());
                 }
                 writeInFile();
                 return true;
@@ -68,5 +71,9 @@ public class Model {
             return true;
         }
         return false;
+    }
+
+    public SortedMap<Date, Set<Task>> getCalendar(Date start, Date end) {
+        return Tasks.calendar(taskList, start, end);
     }
 }

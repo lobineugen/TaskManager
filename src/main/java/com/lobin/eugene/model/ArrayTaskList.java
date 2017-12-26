@@ -12,7 +12,7 @@ import java.util.Objects;
  * @version 1.0 11 Oct 2017
  */
 
-public class ArrayTaskList extends TaskList implements Cloneable {
+public class ArrayTaskList<E> extends TaskList implements Cloneable {
     private static final int SIZE = 10;
     private Task[] arrayTask = new Task[SIZE];
     private int count = 0;

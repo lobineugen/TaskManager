@@ -84,6 +84,21 @@ class GUIController {
             }
         });
 
+        view.getStartPanel().addCalendarActionListened(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.getCardLayout().show(view.getContainer(), "Calendar");
+            }
+        });
+
+        view.getCalendarPanel().addBackActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.getCardLayout().show(view.getContainer(), "Start form");
+                model.loadFromFile();
+            }
+        });
+
     }
 
     String getFocusTabled() {

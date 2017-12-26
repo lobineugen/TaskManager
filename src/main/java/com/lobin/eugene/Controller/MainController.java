@@ -9,8 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 public class MainController {
     private Model model;
@@ -24,6 +23,9 @@ public class MainController {
     private static final String EMPRTYROWFORREMOVE = "To start removing, select row with task!";
     private static final String SUCCESSFULLYCHANGED = "Successfully changed task!";
     private static final String EPRTYROWFOREDIT = "To start editing, select row with task!";
+    private static final String INFOCALENDAREMPTY = "Calendar of tasks for this date is empty!" +
+            " Enter a new date and try again.";
+    private static final String STARTDATEMUSTBEBEFORENDDATE = "Start date must be before end date!!!";
 
     private MainController(final Model model, final View view, GUIController guiController) {
         this.model = model;
@@ -36,6 +38,7 @@ public class MainController {
         this.view.getStartPanel().addEditActionListener(new AddEditActionListener());
         this.view.getEditPanel().addSaveButtonListener(new AddSaveButtonListener());
         this.view.getStartPanel().addRemoveTaskListener(new AddRemoveTaskListener());
+        this.view.getCalendarPanel().addShowActionListener(new StartActionListener());
     }
 
     class AddCreateTaskListener implements ActionListener {
@@ -43,12 +46,19 @@ public class MainController {
         public void actionPerformed(ActionEvent e) {
             if (view.getCreateTaskPanel().getTaskType()) {
                 if (view.getCreateTaskPanel().getTaskTitleTwo().trim().length() > 0) {
-                    model.addTask(view.getCreateTaskPanel().getTaskTitleTwo(),
-                            deleteSeconds(view.getCreateTaskPanel().getStartTime()),
-                            deleteSeconds(view.getCreateTaskPanel().getEndTime()),
-                            view.getCreateTaskPanel().getInterval(),
-                            view.getCreateTaskPanel().getActiveTwo());
-                    successfullyMessage(SUCCESSFULLYADDED);
+                    Date start = view.getCreateTaskPanel().getStartTime();
+                    Date end = view.getCreateTaskPanel().getEndTime();
+                    if(start.compareTo(end) <= 0){
+                        model.addTask(view.getCreateTaskPanel().getTaskTitleTwo(),
+                                deleteSeconds(start),
+                                deleteSeconds(end),
+                                view.getCreateTaskPanel().getInterval(),
+                                view.getCreateTaskPanel().getActiveTwo());
+                        successfullyMessage(SUCCESSFULLYADDED);
+                    } else {
+                        errorMessage(STARTDATEMUSTBEBEFORENDDATE);
+                    }
+
                 } else {
                     errorMessage(EMPTYTITLE);
                 }
@@ -121,6 +131,40 @@ public class MainController {
         }
     }
 
+    class StartActionListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date startDate = view.getCalendarPanel().getStartDate();
+            Date endDate = view.getCalendarPanel().getEndDate();
+            if(startDate.compareTo(endDate) <= 0){
+                SortedMap<Date, Set<Task>> map = model.getCalendar(startDate, endDate);
+                JTextArea text = view.getCalendarPanel().getTextArea();
+                if(map.size() > 0) {
+                    text.setText("");
+                    for (Map.Entry<Date, Set<Task>> entry : map.entrySet()) {
+                        text.append("Date - " + dateFormat.format(entry.getKey()) + " ");
+                        int size = 0;
+                        for (Task task : entry.getValue()){
+                            text.append("Task - " + task.getTitle());
+                            if(size < entry.getValue().size() - 1){
+                                text.append(", ");
+                            }
+                        }
+                        text.append("\n");
+                    }
+                } else {
+                    infoMessage(INFOCALENDAREMPTY);
+                    text.setText("");
+                }
+            } else {
+                errorMessage(STARTDATEMUSTBEBEFORENDDATE);
+            }
+
+
+        }
+    }
+
     class AddSaveButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -140,13 +184,19 @@ public class MainController {
 
             } else {
                 if (view.getEditPanel().getRepTaskPanel().getTitle().trim().length() > 0) {
-                    taskWithNewInfo = new Task(view.getEditPanel().getRepTaskPanel().getTitle(),
-                            view.getEditPanel().getRepTaskPanel().getStartTime(),
-                            view.getEditPanel().getRepTaskPanel().getEndTime(),
-                            view.getEditPanel().getRepTaskPanel().getInterval());
-                    taskWithNewInfo.setActive(view.getEditPanel().getRepTaskPanel().getActive());
-                    if (model.editTask(taskForComparison, taskWithNewInfo)) {
-                        successfullyMessage(SUCCESSFULLYCHANGED);
+                    Date start = view.getEditPanel().getRepTaskPanel().getStartTime();
+                    Date end = view.getEditPanel().getRepTaskPanel().getEndTime();
+                    if(start.compareTo(end) <= 0){
+                        taskWithNewInfo = new Task(view.getEditPanel().getRepTaskPanel().getTitle(),
+                                start,
+                                end,
+                                view.getEditPanel().getRepTaskPanel().getInterval());
+                        taskWithNewInfo.setActive(view.getEditPanel().getRepTaskPanel().getActive());
+                        if (model.editTask(taskForComparison, taskWithNewInfo)) {
+                            successfullyMessage(SUCCESSFULLYCHANGED);
+                        }
+                    } else {
+                        errorMessage(STARTDATEMUSTBEBEFORENDDATE);
                     }
                 } else {
                     errorMessage(EMPTYTITLE);
@@ -227,6 +277,11 @@ public class MainController {
     private void errorMessage(String text) {
         JOptionPane.showMessageDialog(null, "Error: " + text, "Error Massage",
                 JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void infoMessage(String text) {
+        JOptionPane.showMessageDialog(null, text,
+                "Information", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void main(String[] args) {

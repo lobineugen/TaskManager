@@ -9,6 +9,7 @@ public class StartPanel {
     private JPanel startPanel = new JPanel();
     private JButton bCreateNewTask = new JButton("Create new task");
     private JButton bEdit = new JButton("Edit");
+    private JButton bCalendar = new JButton("Calendar");
     private Object[] oNonRep = new Object[]{"Title", "Date", "Active"};
     private Object[] oRep = new Object[]{"Title", "Start time", "End time", "Interval", "Active"};
     private JTable jTableRep = createTable(oRep);
@@ -31,7 +32,8 @@ public class StartPanel {
                                 .addGroup(glStart.createParallelGroup()
                                         .addComponent(bCreateNewTask)
                                         .addComponent(bEdit)
-                                        .addComponent(bRemove)))
+                                        .addComponent(bRemove)
+                                        .addComponent(bCalendar)))
                         .addComponent(spRep)));
 
         glStart.setVerticalGroup(glStart.createSequentialGroup()
@@ -40,10 +42,11 @@ public class StartPanel {
                         .addGroup(glStart.createSequentialGroup()
                                 .addComponent(bCreateNewTask)
                                 .addComponent(bEdit)
-                                .addComponent(bRemove)))
+                                .addComponent(bRemove)
+                                .addComponent(bCalendar)))
                 .addComponent(spRep)
         );
-        glStart.linkSize(SwingConstants.HORIZONTAL, bCreateNewTask, bEdit, bRemove);
+        glStart.linkSize(SwingConstants.HORIZONTAL, bCreateNewTask, bEdit, bRemove, bCalendar);
 
     }
 
@@ -69,6 +72,10 @@ public class StartPanel {
 
     public void addCreateTaskActionListener(ActionListener listener) {
         bCreateNewTask.addActionListener(listener);
+    }
+
+    public void addCalendarActionListened(ActionListener listener) {
+        bCalendar.addActionListener(listener);
     }
 
     private JTable createTable(Object[] objects) {

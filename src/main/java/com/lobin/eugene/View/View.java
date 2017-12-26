@@ -1,5 +1,7 @@
 package com.lobin.eugene.View;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,6 +12,7 @@ public class View extends JFrame {
     private StartPanel startPanel = new StartPanel();
     private CreateTaskPanel createTaskPanel = new CreateTaskPanel();
     private EditPanel editPanel = new EditPanel();
+    private CalendarPanel calendarPanel = new CalendarPanel();
 
     public View() {
         super("Task Manager");
@@ -21,6 +24,7 @@ public class View extends JFrame {
         container.add("Start form", startPanel.getStartPanel());
         container.add("Create task", createTaskPanel.getCreateTaskPanel());
         container.add("Edit task", editPanel.getEditPanel());
+        container.add("Calendar", calendarPanel.getCalendarPanel());
     }
 
     public CardLayout getCardLayout() {
@@ -41,5 +45,9 @@ public class View extends JFrame {
 
     public EditPanel getEditPanel() {
         return editPanel;
+    }
+
+    public CalendarPanel getCalendarPanel() {
+        return calendarPanel;
     }
 }
