@@ -1,15 +1,33 @@
 package com.lobin.eugene.View;
 
-import javax.swing.*;
+import com.lobin.eugene.Controller.TaskConstant;
+
+import javax.swing.GroupLayout;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SwingConstants;
 import javax.swing.text.NumberFormatter;
-import java.awt.*;
+import java.awt.Dimension;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class RepTaskPanel {
+import static com.lobin.eugene.View.Config.createGroupLayout;
+import static com.lobin.eugene.View.Config.setDateEditor;
+
+/**
+ * Class with repetitive panel for jFrame.
+ *
+ * @author Eugene Lobin
+ * @version 1.0 28 Dec 2017
+ */
+public class RepTaskPanel implements TaskConstant {
     private JPanel panel = new JPanel();
-    private JTextField title = new JTextField(30);
+    private JTextField title = new JTextField();
     private SpinnerDateModel modelStart = new SpinnerDateModel();
     private SpinnerDateModel modelEnd = new SpinnerDateModel();
     private JSpinner startTime = new JSpinner(modelStart);
@@ -18,8 +36,8 @@ public class RepTaskPanel {
     private JRadioButton active = new JRadioButton();
 
     RepTaskPanel() {
-        GroupLayout groupLayout = new GroupLayout(panel);
-        // маска для ввода Интеравала only int
+        GroupLayout groupLayout =  createGroupLayout(panel);
+
         NumberFormat format = NumberFormat.getIntegerInstance();
         format.setGroupingUsed(false);
         NumberFormatter formatter = new NumberFormatter(format);
@@ -30,28 +48,23 @@ public class RepTaskPanel {
         interval = new JFormattedTextField(formatter);
         interval.setText("1");
 
-        // дата формат для спиннеров
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        startTime.setEditor(new JSpinner.DateEditor(startTime, dateFormat.toPattern()));
-        endTime.setEditor(new JSpinner.DateEditor(endTime, dateFormat.toPattern()));
+        setDateEditor(startTime);
+        setDateEditor(endTime);
 
-        JLabel title = new JLabel("Title");
-        title.setPreferredSize(new Dimension(70, 20));
-        JLabel startTime = new JLabel("Start date");
-        JLabel endTime = new JLabel("End date");
-        JLabel interval = new JLabel("Interval");
-        JLabel active = new JLabel("Active");
+        JLabel lTitle = new JLabel("Title");
+        lTitle.setPreferredSize(new Dimension(TITLE_WIDTH, TITLE_HEIGHT));
+        JLabel lStartTime = new JLabel("Start date");
+        JLabel lEndTime = new JLabel("End date");
+        JLabel lInterval = new JLabel("Interval");
+        JLabel lActive = new JLabel("Active");
 
-        panel.setLayout(groupLayout);
-        groupLayout.setAutoCreateGaps(true);
-        groupLayout.setAutoCreateContainerGaps(true);
         groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
                 .addGroup(groupLayout.createParallelGroup()
-                        .addComponent(title)
-                        .addComponent(startTime)
-                        .addComponent(endTime)
-                        .addComponent(interval)
-                        .addComponent(active))
+                        .addComponent(lTitle)
+                        .addComponent(lStartTime)
+                        .addComponent(lEndTime)
+                        .addComponent(lInterval)
+                        .addComponent(lActive))
                 .addGroup(groupLayout.createParallelGroup()
                         .addComponent(this.title)
                         .addComponent(this.startTime)
@@ -59,65 +72,104 @@ public class RepTaskPanel {
                         .addComponent(this.interval)
                         .addComponent(this.active)));
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(title)
+                .addGroup(groupLayout.createParallelGroup(
+                        GroupLayout.Alignment.BASELINE)
+                        .addComponent(lTitle)
                         .addComponent(this.title))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(startTime)
+                .addGroup(groupLayout.createParallelGroup(
+                        GroupLayout.Alignment.BASELINE)
+                        .addComponent(lStartTime)
                         .addComponent(this.startTime))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(endTime)
+                .addGroup(groupLayout.createParallelGroup(
+                        GroupLayout.Alignment.BASELINE)
+                        .addComponent(lEndTime)
                         .addComponent(this.endTime))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(interval)
+                .addGroup(groupLayout.createParallelGroup(
+                        GroupLayout.Alignment.BASELINE)
+                        .addComponent(lInterval)
                         .addComponent(this.interval))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(active)
+                .addGroup(groupLayout.createParallelGroup(
+                        GroupLayout.Alignment.BASELINE)
+                        .addComponent(lActive)
                         .addComponent(this.active)));
 
-        groupLayout.linkSize(SwingConstants.HORIZONTAL, title, startTime, endTime, interval, active);
+        groupLayout.linkSize(SwingConstants.HORIZONTAL, lTitle,
+                lStartTime, lEndTime, lInterval, lActive);
     }
 
+    /**
+     * @return repetitive panel
+     */
     public JPanel getPanel() {
         return panel;
     }
 
+    /**
+     * @return task title
+     */
     public String getTitle() {
         return title.getText();
     }
 
+    /**
+     * @return task start time
+     */
     public Date getStartTime() {
         return (Date) startTime.getValue();
     }
 
+    /**
+     * @return task end time
+     */
     public Date getEndTime() {
         return (Date) endTime.getValue();
     }
 
+    /**
+     * @return task interval
+     */
     public int getInterval() {
         return Integer.parseInt(interval.getText());
     }
 
+    /**
+     * @return task active
+     */
     public boolean getActive() {
         return active.isSelected();
     }
 
+    /**
+     * @param title text for task
+     */
     public void setTitle(String title) {
         this.title.setText(title);
     }
 
+    /**
+     * @param startTime start date for task
+     */
     public void setStartTime(Object startTime) {
         this.startTime.setValue(startTime);
     }
 
+    /**
+     * @param endTime end date for task
+     */
     public void setEndTime(Object endTime) {
         this.endTime.setValue(endTime);
     }
 
+    /**
+     * @param interval interval for task
+     */
     public void setInterval(int interval) {
         this.interval.setValue(interval);
     }
 
+    /**
+     * @param active for task
+     */
     public void setActive(boolean active) {
         this.active.setSelected(active);
     }

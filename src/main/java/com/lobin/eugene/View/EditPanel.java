@@ -1,7 +1,19 @@
 package com.lobin.eugene.View;
 
-import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
+
+import static com.lobin.eugene.View.Config.createGroupLayout;
+
+/**
+ * Class with edit panel for jFrame.
+ *
+ * @author Eugene Lobin
+ * @version 1.0 28 Dec 2017
+ */
 
 public class EditPanel {
     private JPanel editPanel = new JPanel();
@@ -10,15 +22,14 @@ public class EditPanel {
     private RepTaskPanel repTaskPanel = new RepTaskPanel();
     private NonRepTaskPanel nonRepTaskPanel = new NonRepTaskPanel();
     private JButton bSave = new JButton("Save");
-    private JButton bCancel = new JButton("Cancel");
+    private JButton bCancel = new JButton("Back ");
 
     EditPanel() {
-        GroupLayout glEdit = new GroupLayout(editPanel);
+        GroupLayout glEdit = createGroupLayout(editPanel);
+
         pEditRepTask = repTaskPanel.getPanel();
         pEditNonRepTask = nonRepTaskPanel.getPanel();
-        editPanel.setLayout(glEdit);
-        glEdit.setAutoCreateGaps(true);
-        glEdit.setAutoCreateContainerGaps(true);
+
         glEdit.setVerticalGroup(glEdit.createSequentialGroup()
                 .addGroup(glEdit.createParallelGroup()
                         .addGroup(glEdit.createSequentialGroup()
@@ -39,31 +50,52 @@ public class EditPanel {
 
     }
 
+    /**
+     * @return edit panel
+     */
     public JPanel getEditPanel() {
         return editPanel;
     }
 
+    /**
+     * @return edit non-repetitive task panel
+     */
     public JPanel getEditNonRepTask() {
         return pEditNonRepTask;
     }
 
+    /**
+     * @return edit repetitive task panel
+     */
     public JPanel getEditRepTask() {
         return pEditRepTask;
     }
 
-    public void addSaveButtonListener(ActionListener listener) {
-        bSave.addActionListener(listener);
-    }
-
+    /**
+     * @param listener for cancel button
+     */
     public void addCancelButtonListener(ActionListener listener) {
         bCancel.addActionListener(listener);
     }
 
+    /**
+     * @return non-repetitive task panel
+     */
     public NonRepTaskPanel getNonRepTaskPanel() {
         return nonRepTaskPanel;
     }
 
+    /**
+     * @return repetitive task panel
+     */
     public RepTaskPanel getRepTaskPanel() {
         return repTaskPanel;
+    }
+
+    /**
+     * @return save button
+     */
+    public JButton getSave() {
+        return bSave;
     }
 }

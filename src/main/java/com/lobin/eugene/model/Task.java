@@ -7,8 +7,8 @@ import java.util.Date;
 /**
  * Class for create task.
  *
- * @version 1.0 11 Oct 2017
  * @author Eugene Lobin
+ * @version 1.0 11 Oct 2017
  */
 
 public class Task implements Cloneable, Serializable {
@@ -24,7 +24,7 @@ public class Task implements Cloneable, Serializable {
      * Constructor non-repeated task
      *
      * @param title (required) title task
-     * @param time (required) time task
+     * @param time  (required) time task
      */
     public Task(String title, Date time) {
         this.time = time;
@@ -36,9 +36,9 @@ public class Task implements Cloneable, Serializable {
     /**
      * Constructor repeated task
      *
-     * @param title (required) title task
-     * @param start (required) start time task
-     * @param end (required) end time task
+     * @param title    (required) title task
+     * @param start    (required) start time task
+     * @param end      (required) end time task
      * @param interval (required)  recurrence interval time task
      */
     public Task(String title, Date start, Date end, int interval) {
@@ -142,16 +142,16 @@ public class Task implements Cloneable, Serializable {
 
     /**
      * if the task is non-repeatable, it becomes repeated with new parameters
-     * @param start (start time)
-     * @param end ( end time)
+     *
+     * @param start    (start time)
+     * @param end      ( end time)
      * @param interval ( recurrence interval)
-     * @throws TimeException if start < 0, end < 0 or interval <= 0
-     * @exception TimeException if start < 0 ane
+     * @throws IllegalArgumentException if start < 0, end < 0 or interval <= 0
      */
     public void setTime(Date start, Date end, int interval)
-            throws TimeException {
+            throws IllegalArgumentException {
         if (interval <= 0) {
-            throw  new TimeException("Interval must be > 0: "
+            throw new IllegalArgumentException("Interval must be > 0: "
                     + this + " - interval " + interval);
         } else {
             if (!repeat) {
@@ -226,8 +226,8 @@ public class Task implements Cloneable, Serializable {
 
     /**
      * a value depending on the @param current (preset time)
-     * @return -1, time, start or nextTimeAfter
      *
+     * @return -1, time, start or nextTimeAfter
      */
     public Date nextTimeAfter(Date current) {
         if (this.active && !repeat) {
