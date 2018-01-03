@@ -7,10 +7,13 @@ import org.apache.log4j.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JTextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.EOFException;
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,9 +22,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
+/**
+ * Main class for control model and view
+ *
+ * @author Eugene Lobin
+ * @version 1.1 29 Nov 2017
+ */
 
 public class MainController implements TaskConstant {
-    private static final Logger log = Logger.getLogger(MainController.class);
+    private static final Logger LOG = Logger.getLogger(MainController.class);
     private Model model;
     private View view;
     private GUIController guiController;
@@ -42,7 +51,8 @@ public class MainController implements TaskConstant {
         this.model.setFileListName(fileListName);
         if (fileListName.size() > 0) {
             this.model.setFile(new File(fileListName.get(0) + FILE_EXTENSION));
-            this.model.loadFromFile();
+            guiController.loafFromFile();
+            view.setTitle(TASK_TITLE + " - " + fileListName.get(0) + FILE_EXTENSION);
         } else {
             this.guiController.setButtonEnabled(false);
         }
@@ -54,8 +64,9 @@ public class MainController implements TaskConstant {
         saveTask(view.getEditPanel().getSave());
         removeTask(view.getStartPanel().getRemove());
         showCalendar(view.getCalendarPanel().getShow());
-        removeTaskListListener(view.getStartPanel().getDeleteList());
-        addTaskListListener(view.getStartPanel().getAddNewList());
+        removeTaskList(view.getStartPanel().getDeleteList());
+        addTaskList(view.getStartPanel().getAddNewList());
+        openTaskList(view.getStartPanel().getOpen());
     }
 
     /**
@@ -87,7 +98,7 @@ public class MainController implements TaskConstant {
                                     .successfullyMessage(SUCCESSFULLY_ADDED);
                             guiController.clearCreateTaskField();
                             view.getCardLayout().show(view.getContainer(), "Start form");
-                            model.loadFromFile();
+                            guiController.loafFromFile();
                             guiController.writeTasks(model.getTaskList());
                         } else {
                             guiController
@@ -106,7 +117,7 @@ public class MainController implements TaskConstant {
                         guiController.successfullyMessage(SUCCESSFULLY_ADDED);
                         guiController.clearCreateTaskField();
                         view.getCardLayout().show(view.getContainer(), "Start form");
-                        model.loadFromFile();
+                        guiController.loafFromFile();
                         guiController.writeTasks(model.getTaskList());
                     } else {
                         guiController.errorMessage(EMPTY_TITLE);
@@ -125,14 +136,13 @@ public class MainController implements TaskConstant {
         remove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                log.debug("Start processing");
                 Task task;
                 int row;
                 String focus = guiController.getFocusTabled();
                 switch (focus) {
                     case "Rep":
-                        if (log.isDebugEnabled()) {
-                            log.debug("Focus table: " + focus);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Focus table: " + focus);
                         }
                         try {
                             if ((row = view.getStartPanel().getTableRep().getSelectedRow()) != -1) {
@@ -153,14 +163,13 @@ public class MainController implements TaskConstant {
                             } else {
                                 guiController.errorMessage(EMPTY_ROW_FOR_REMOVE);
                             }
-                            log.debug("done");
                             break;
                         } catch (ParseException ex) {
-                            log.error("Parse exception", ex);
+                            LOG.error("Parse exception", ex);
                         }
                     case "Non":
-                        if (log.isDebugEnabled()) {
-                            log.debug("Focus table: " + focus);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Focus table: " + focus);
                         }
                         try {
                             if ((row = view.getStartPanel().getTableNonRep().getSelectedRow()) != -1) {
@@ -177,10 +186,9 @@ public class MainController implements TaskConstant {
                             } else {
                                 guiController.errorMessage(EMPTY_ROW_FOR_REMOVE);
                             }
-                            log.debug("Done");
                             break;
                         } catch (ParseException ex) {
-                            log.error("Parse exception", ex);
+                            LOG.error("Parse exception", ex);
                         }
                     default:
                         guiController.errorMessage(EMPTY_ROW_FOR_REMOVE);
@@ -290,6 +298,9 @@ public class MainController implements TaskConstant {
                 switch (focus) {
                     case "Rep": {
                         try {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Focus table: " + focus);
+                            }
                             row = view.getStartPanel().getTableRep().getSelectedRow();
                             if (row != -1) {
                                 taskForComparison = new Task(view.getStartPanel().getTableRep().getModel()
@@ -322,12 +333,15 @@ public class MainController implements TaskConstant {
                             }
 
                         } catch (ParseException ex) {
-                            ex.printStackTrace();
+                            LOG.error("Parse exception", ex);
                         }
                         break;
                     }
                     case "Non": {
                         try {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Focus table: " + focus);
+                            }
                             row = view.getStartPanel().getTableNonRep().getSelectedRow();
                             if (row != -1) {
                                 taskForComparison = new Task(view.getStartPanel().getTableNonRep().getModel()
@@ -351,13 +365,53 @@ public class MainController implements TaskConstant {
                                 guiController.errorMessage(EMPTY_ROW_FOR_EDIT);
                             }
                         } catch (ParseException ex) {
-                            ex.printStackTrace();
+                            LOG.error("Parse exception", ex);
                         }
                         break;
                     }
                     default:
                         guiController.errorMessage(EMPTY_ROW_FOR_EDIT);
                         break;
+                }
+            }
+        });
+    }
+
+    /**
+     * create new task listener for open buton
+     *
+     * @param open button
+     */
+    private void openTaskList(JButton open) {
+        open.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                int res = fileChooser.showDialog(null, "Open file");
+                if (res == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    int index = file.getName().indexOf('.');
+                    if (index != -1) {
+                        if (file.getName().substring(index).equals(".bin")) {
+                            model.setFile(file);
+                            try {
+                                model.loadFromFile();
+                                if (model.getTaskList().size() == 0) {
+                                    guiController.infoMessage(LIST_EMPTY);
+                                }
+                                view.setTitle(TASK_TITLE + " - " + file.getName());
+                                view.getStartPanel().getTaskList().setSelectedIndex(-1);
+                                guiController.writeTasks(model.getTaskList());
+                                guiController.setButtonEnabled(true);
+                            } catch (EOFException e1) {
+                                guiController.errorMessage(INCORRECT_CONTENTS);
+                            } catch (IOException e1) {
+                                LOG.error("IOException", e1);
+                            }
+                        } else {
+                            guiController.errorMessage(FILE_MUST_BE_BIN_FORMAT);
+                        }
+                    }
                 }
             }
         });
@@ -395,7 +449,7 @@ public class MainController implements TaskConstant {
      *
      * @param removeList button
      */
-    private void removeTaskListListener(JButton removeList) {
+    private void removeTaskList(JButton removeList) {
         removeList.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -424,28 +478,30 @@ public class MainController implements TaskConstant {
      *
      * @param addList button
      */
-    private void addTaskListListener(JButton addList) {
+    private void addTaskList(JButton addList) {
         addList.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String name = guiController.inputDialog(ADD_NEW_TASK_LIST);
-                if (name == null || name.isEmpty()) {
-                    guiController.errorMessage(FILE_NAME_CANT_BE_EMPTY);
-                } else {
-                    if (name.matches("^[a-zA-Z0-9\\s]*$")) {
-                        if (model.getFileListName().contains(name)) {
-                            guiController.errorMessage(THIS_FILE_NAME_BE_USED);
-                        } else {
-                            if (model.createNewFile(name)) {
-                                view.getStartPanel().getTaskList().addItem(name);
-                                guiController.successfullyMessage(TASK_LIST_WAS_CREATED);
-                                guiController.setButtonEnabled(true);
-                            } else {
-                                guiController.errorMessage(TASK_LIST_WAS_NOT_CREATED);
-                            }
-                        }
+                if (name != null) {
+                    if (("").equals(name)) {
+                        guiController.errorMessage(FILE_NAME_CANT_BE_EMPTY);
                     } else {
-                        guiController.errorMessage(NAME_MUST_CONSIST_ONLY_OF_NUMBERS_AND_LETTERS);
+                        if (name.matches("^[a-zA-Z0-9\\s]*$")) {
+                            if (model.getFileListName().contains(name)) {
+                                guiController.errorMessage(THIS_FILE_NAME_BE_USED);
+                            } else {
+                                if (model.createNewFile(name)) {
+                                    view.getStartPanel().getTaskList().addItem(name);
+                                    guiController.successfullyMessage(TASK_LIST_WAS_CREATED);
+                                    guiController.setButtonEnabled(true);
+                                } else {
+                                    guiController.errorMessage(TASK_LIST_WAS_NOT_CREATED);
+                                }
+                            }
+                        } else {
+                            guiController.errorMessage(NAME_MUST_CONSIST_ONLY_OF_NUMBERS_AND_LETTERS);
+                        }
                     }
                 }
             }
@@ -464,7 +520,9 @@ public class MainController implements TaskConstant {
                 if (view.getStartPanel().getTaskList().getSelectedItem() != null) {
                     model.setFile(new File(view.getStartPanel()
                             .getTaskList().getSelectedItem() + ".bin"));
-                    model.loadFromFile();
+                    view.setTitle(TASK_TITLE + " - " + view.getStartPanel().getTaskList().getSelectedItem()
+                            + FILE_EXTENSION);
+                    guiController.loafFromFile();
                     guiController.writeTasks(model.getTaskList());
                 } else {
                     guiController.clearTable();

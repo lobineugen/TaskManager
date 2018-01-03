@@ -3,6 +3,7 @@ package com.lobin.eugene.Controller;
 import com.lobin.eugene.View.View;
 import com.lobin.eugene.model.ArrayTaskList;
 import com.lobin.eugene.model.Model;
+import org.apache.log4j.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
@@ -13,15 +14,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
+
+/**
+ * Class for control gui
+ *
+ * @author Eugene Lobin
+ * @version 1.1 29 Nov 2017
+ */
 
 class GUIController implements TaskConstant {
+    private static final Logger LOG = Logger.getLogger(MainController.class);
     private View view;
     private String focusTabled = "noSelect";
     private Model model;
 
-    GUIController(View viewStart, Model modell) {
+    GUIController(View viewStart, Model model) {
         view = viewStart;
-        this.model = modell;
+        this.model = model;
         view.getStartPanel().addCreateTaskActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -33,8 +43,8 @@ class GUIController implements TaskConstant {
             @Override
             public void actionPerformed(ActionEvent e) {
                 view.getCardLayout().show(view.getContainer(), "Start form");
-                model.loadFromFile();
-                writeTasks(model.getTaskList());
+                loafFromFile();
+                writeTasks(GUIController.this.model.getTaskList());
             }
         });
 
@@ -46,57 +56,55 @@ class GUIController implements TaskConstant {
             }
         });
 
-        view.getCreateTaskPanel().
-                addCreateNonReTaskListener(new ItemListener() {
-                    @Override
-                    public void itemStateChanged(ItemEvent e) {
-                        view.getCreateTaskPanel().
-                                getNonRepTask().setVisible(true);
-                        view.getCreateTaskPanel().
-                                getRepTask().setVisible(false);
-                    }
-                });
-        ListSelectionModel listSelectionModel1 =
-                view.getStartPanel().getTableNonRep().getSelectionModel();
-        listSelectionModel1.
-                addListSelectionListener(new ListSelectionListener() {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e) {
-                        if (view.getStartPanel().
-                                getTableNonRep().getSelectedRow() != -1) {
-                            focusTabled = "Non";
-                            view.getStartPanel().getTableRep().clearSelection();
-                        }
-                    }
-                });
+        view.getCreateTaskPanel().addCreateNonReTaskListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                view.getCreateTaskPanel().
+                        getNonRepTask().setVisible(true);
+                view.getCreateTaskPanel().
+                        getRepTask().setVisible(false);
+            }
+        });
 
-        ListSelectionModel listSelectionModel2 =
-                view.getStartPanel().getTableRep().getSelectionModel();
-        listSelectionModel2.
-                addListSelectionListener(new ListSelectionListener() {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e) {
-                        if (view.getStartPanel().
-                                getTableRep().getSelectedRow() != -1) {
-                            focusTabled = "Rep";
-                            view.getStartPanel().
-                                    getTableNonRep().clearSelection();
-                        }
-                    }
-                });
+        ListSelectionModel model1 = view.getStartPanel().getTableNonRep().getSelectionModel();
+
+        model1.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (view.getStartPanel().
+                        getTableNonRep().getSelectedRow() != -1) {
+                    focusTabled = "Non";
+                    view.getStartPanel().getTableRep().clearSelection();
+                }
+            }
+        });
+
+        ListSelectionModel model2 = view.getStartPanel().getTableRep().getSelectionModel();
+
+        model2.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (view.getStartPanel().
+                        getTableRep().getSelectedRow() != -1) {
+                    focusTabled = "Rep";
+                    view.getStartPanel().
+                            getTableNonRep().clearSelection();
+                }
+            }
+        });
 
         view.getEditPanel().addCancelButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 view.getCardLayout().show(view.getContainer(), "Start form");
-                model.loadFromFile();
-                writeTasks(model.getTaskList());
+                loafFromFile();
+                writeTasks(GUIController.this.model.getTaskList());
                 focusTabled = "noSelect";
 
             }
         });
 
-        view.getStartPanel().addCalendarActionListened(new ActionListener() {
+        view.getStartPanel().addCalendarActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 view.getCardLayout().show(view.getContainer(), "Calendar");
@@ -107,10 +115,21 @@ class GUIController implements TaskConstant {
             @Override
             public void actionPerformed(ActionEvent e) {
                 view.getCardLayout().show(view.getContainer(), "Start form");
-                model.loadFromFile();
+                loafFromFile();
             }
         });
 
+    }
+
+    /**
+     * load tasks from file
+     */
+    void loafFromFile() {
+        try {
+            model.loadFromFile();
+        } catch (IOException ex) {
+            LOG.error("IOException", ex);
+        }
     }
 
     /**
@@ -239,7 +258,7 @@ class GUIController implements TaskConstant {
     /**
      * Clear repetitive and non-repetitive task filed
      */
-    void clearCreateTaskField(){
+    void clearCreateTaskField() {
         view.getCreateTaskPanel().getRepTaskPanel().clearField();
         view.getCreateTaskPanel().getNonRepTaskPanel().clearField();
     }

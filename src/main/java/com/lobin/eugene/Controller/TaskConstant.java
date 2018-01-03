@@ -31,6 +31,9 @@ public interface TaskConstant {
     String NAME_MUST_CONSIST_ONLY_OF_NUMBERS_AND_LETTERS = "The name must" +
             " consist only of numbers and letters";
     String FILE_EXTENSION = ".bin";
+    String FILE_MUST_BE_BIN_FORMAT = "File must be .bin format!";
+    String TASK_TITLE = "Task Manager";
+    String INCORRECT_CONTENTS = "The contents of the file are incorrect";
     int COLUMN_INDEX_ZERO = 0;
     int COLUMN_INDEX_ONE = 1;
     int COLUMN_INDEX_TWO = 2;

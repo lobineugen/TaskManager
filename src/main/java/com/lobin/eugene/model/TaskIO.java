@@ -1,6 +1,19 @@
 package com.lobin.eugene.model;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,7 +66,7 @@ public class TaskIO {
      * @throw IOException if stream to in cannot be read to or closed.
      * Read tasks from input thread in binary format
      */
-    public static void read(TaskList tasks, InputStream in) {
+    public static void read(TaskList tasks, InputStream in) throws IOException {
         try (DataInputStream data = new DataInputStream(in)) {
             int size = data.readInt();
             for (int i = 0; i < size; i++) {
@@ -79,8 +92,6 @@ public class TaskIO {
                 }
                 tasks.add(task);
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -97,8 +108,6 @@ public class TaskIO {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
-
     }
 
     /**
@@ -107,17 +116,13 @@ public class TaskIO {
      * @throw IOException if stream to file cannot be read to or closed.
      * Write task in file in binary format
      */
-    public static void readBinary(TaskList tasks, File file) {
+    public static void readBinary(TaskList tasks, File file) throws IOException {
         try (DataInputStream data = new DataInputStream(
                 new FileInputStream(file))) {
             if (file.length() != 0) {
                 read(tasks, data);
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
-
-
     }
 
     /**
@@ -324,15 +329,14 @@ public class TaskIO {
     /**
      * @param tasks - task list with tasks
      * @param file  - file for reading
-     * @throws ParseException if cannot be parse from string in int
-     *                        Write task in file in text format
+     * @throw ParseException if cannot be parse from string in int
+     * Write task in file in text format
      * @throw IOException if stream to file cannot be read to or closed.
      */
-    public static void readText(TaskList tasks, File file)
-            throws ParseException {
+    public static void readText(TaskList tasks, File file) {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             read(tasks, br);
-        } catch (IOException ex) {
+        } catch (IOException | ParseException ex) {
             ex.printStackTrace();
         }
     }

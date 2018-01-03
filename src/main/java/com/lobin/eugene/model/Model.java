@@ -1,9 +1,5 @@
 package com.lobin.eugene.model;
 
-
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -13,8 +9,15 @@ import java.util.Date;
 import java.util.Set;
 import java.util.SortedMap;
 
+/**
+ * Class for use libs task
+ *
+ * @author Eugene Lobin
+ * @version 1.1 29 Nov 2017
+ */
+
 public class Model {
-    private static final Logger log = Logger.getLogger(Model.class);
+    private static final Logger LOG = Logger.getLogger(Model.class);
     private ArrayTaskList<Task> taskList = new ArrayTaskList<>();
     private File dir = new File(".");
     private File[] fileList = dir.listFiles();
@@ -23,8 +26,9 @@ public class Model {
 
     /**
      * load tasks into task list form file
+     * @throws IOException if stream to file cannot be written to or closed.
      */
-    public void loadFromFile() {
+    public void loadFromFile() throws IOException {
         taskList.clear();
         TaskIO.readBinary(taskList, file);
     }
@@ -79,8 +83,7 @@ public class Model {
      * @param taskWithNewInfo task with new info for edit
      * @return true if  task is successfully edited
      */
-    public boolean editTask(Task taskForCopm,
-                            Task taskWithNewInfo) {
+    public boolean editTask(Task taskForCopm, Task taskWithNewInfo) {
         for (int i = 0; i < taskList.size(); i++) {
             if (taskForCopm.equals(taskList.getTask(i))) {
                 taskList.getTask(i).setTitle(taskWithNewInfo.getTitle());
@@ -92,7 +95,7 @@ public class Model {
                                 taskWithNewInfo.getEndTime(),
                                 taskWithNewInfo.getRepeatInterval());
                     } catch (IllegalArgumentException ex) {
-                        ex.printStackTrace();
+                        LOG.error("IllegalArgumentException", ex);
                     }
                 } else {
                     taskList.getTask(i).setTime(taskWithNewInfo.getTime());
@@ -162,18 +165,16 @@ public class Model {
      * @return true if file be created
      */
     public boolean createNewFile(String fileName) {
-        log.debug("Start processing");
-        if (log.isDebugEnabled()) {
-            log.debug("File name: " + fileName);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("File name: " + fileName);
         }
         try {
             if (new File(fileName + ".bin").createNewFile()) {
                 fileListName.add(fileName);
-                log.debug("done");
                 return true;
             }
         } catch (IOException e) {
-            log.error("IOException", e);
+            LOG.error("IOException", e);
         }
         return false;
 

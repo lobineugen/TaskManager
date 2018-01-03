@@ -19,7 +19,7 @@ import java.awt.event.ActionListener;
 
 import static com.lobin.eugene.View.Config.createGroupLayout;
 
-public class StartPanel implements TaskConstant{
+public class StartPanel implements TaskConstant {
     private JComboBox<String> taskList = new JComboBox<>();
     private JButton bAddNewList = new JButton("Add list");
     private JButton bDeleteList = new JButton("Delete list");
@@ -28,6 +28,7 @@ public class StartPanel implements TaskConstant{
     private JButton bEdit = new JButton("Edit task");
     private JButton bCalendar = new JButton("Calendar");
     private JButton bRemove = new JButton("Remove task");
+    private JButton bOpen = new JButton("Open list");
     private JTable jTableRep = createTable(new Object[]{"Title",
             "Start time", "End time", "Interval(sec)", "Active"});
     private JTable jTableNonRep = createTable(new Object[]{"Title",
@@ -56,7 +57,8 @@ public class StartPanel implements TaskConstant{
                                 .addComponent(lTaskList)
                                 .addComponent(taskList)
                                 .addComponent(bAddNewList)
-                                .addComponent(bDeleteList))
+                                .addComponent(bDeleteList)
+                                .addComponent(bOpen))
                         .addGroup(glStart.createSequentialGroup()
                                 .addGroup(glStart.createParallelGroup()
                                         .addComponent(lNonRepTask)
@@ -76,7 +78,8 @@ public class StartPanel implements TaskConstant{
                         .addComponent(lTaskList)
                         .addComponent(taskList)
                         .addComponent(bAddNewList)
-                        .addComponent(bDeleteList))
+                        .addComponent(bDeleteList)
+                        .addComponent(bOpen))
                 .addComponent(lNonRepTask)
                 .addGroup(glStart.createParallelGroup()
                         .addComponent(spNonRep)
@@ -92,7 +95,7 @@ public class StartPanel implements TaskConstant{
         glStart.linkSize(SwingConstants.HORIZONTAL,
                 bCreateNewTask, bEdit, bRemove, bCalendar);
         glStart.linkSize(SwingConstants.HORIZONTAL,
-                bAddNewList, bDeleteList);
+                bAddNewList, bDeleteList, bOpen);
     }
 
     /**
@@ -126,7 +129,7 @@ public class StartPanel implements TaskConstant{
     /**
      * @param listener for calendar button
      */
-    public void addCalendarActionListened(ActionListener listener) {
+    public void addCalendarActionListener(ActionListener listener) {
         bCalendar.addActionListener(listener);
     }
 
@@ -144,20 +147,20 @@ public class StartPanel implements TaskConstant{
                 int rendererWidth = component.getPreferredSize().width;
                 TableColumn tableColumn = getColumnModel().getColumn(column);
                 tableColumn.setPreferredWidth(Math.max(rendererWidth
-                        + getIntercellSpacing().width + PIXEL,
+                                + getIntercellSpacing().width + PIXEL,
                         tableColumn.getPreferredWidth()));
                 return component;
             }
         };
         DefaultTableModel defaultTableModel =
                 new DefaultTableModel(objects, 0) {
-            // переопределенный метод запрещает
-            // редактирования ячеек
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+                    // переопределенный метод запрещает
+                    // редактирования ячеек
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    }
+                };
         //запрет перемещения названий столбцов
         table.getTableHeader().setReorderingAllowed(false);
         // запрет изменений размером
@@ -194,6 +197,13 @@ public class StartPanel implements TaskConstant{
      */
     public JButton getDeleteList() {
         return bDeleteList;
+    }
+
+    /**
+     * @return delete list button
+     */
+    public JButton getOpen() {
+        return bOpen;
     }
 
     /**
