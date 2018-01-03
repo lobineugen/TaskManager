@@ -55,7 +55,7 @@ public class RepTaskPanel implements TaskConstant {
         lTitle.setPreferredSize(new Dimension(TITLE_WIDTH, TITLE_HEIGHT));
         JLabel lStartTime = new JLabel("Start date");
         JLabel lEndTime = new JLabel("End date");
-        JLabel lInterval = new JLabel("Interval");
+        JLabel lInterval = new JLabel("Interval(sec)");
         JLabel lActive = new JLabel("Active");
 
         groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
@@ -172,5 +172,16 @@ public class RepTaskPanel implements TaskConstant {
      */
     public void setActive(boolean active) {
         this.active.setSelected(active);
+    }
+
+    /**
+     * Clear all field
+     */
+    public void clearField() {
+        title.setText("");
+        startTime.setValue(new Date());
+        endTime.setValue(new Date());
+        interval.setValue(1);
+        active.setSelected(false);
     }
 }

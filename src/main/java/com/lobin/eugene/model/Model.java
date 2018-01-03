@@ -4,6 +4,8 @@ package com.lobin.eugene.model;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ import java.util.Set;
 import java.util.SortedMap;
 
 public class Model {
-//    private static final Logger log = LoggerFactory.getLogger(Model.class);
+    private static final Logger log = Logger.getLogger(Model.class);
     private ArrayTaskList<Task> taskList = new ArrayTaskList<>();
     private File dir = new File(".");
     private File[] fileList = dir.listFiles();
@@ -140,31 +142,38 @@ public class Model {
     }
 
     /**
-     * @param filename removed file name
+     * @param fileName removed file name
      * @return true if file be deleted
      */
-    public boolean removeFileFromList(String filename) {
-        File file = new File(filename);
+    public boolean removeFileFromList(String fileName) {
+        File file = new File(fileName);
         return file.delete();
     }
 
     /**
-     * @param filename new file name
+     * @param fileName removed file name from file list name
+     */
+    public void removeFileNameFromList(String fileName) {
+        fileListName.remove(fileName);
+    }
+
+    /**
+     * @param fileName new file name
      * @return true if file be created
      */
-    public boolean createNewFile(String filename) {
-//        log.debug("Start processing");
-//        if (log.isDebugEnabled()) {
-//            log.debug("File name: "+ filename);
-//        }
+    public boolean createNewFile(String fileName) {
+        log.debug("Start processing");
+        if (log.isDebugEnabled()) {
+            log.debug("File name: " + fileName);
+        }
         try {
-            if (new File(filename + ".bin").createNewFile()) {
-                fileListName.add(filename);
-//                log.debug("done");
+            if (new File(fileName + ".bin").createNewFile()) {
+                fileListName.add(fileName);
+                log.debug("done");
                 return true;
             }
         } catch (IOException e) {
-//            log.error("IOException", e);
+            log.error("IOException", e);
         }
         return false;
 

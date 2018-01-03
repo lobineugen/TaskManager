@@ -189,4 +189,18 @@ public class CreateTaskPanel {
     public JButton getCreateTask() {
         return bCreateTask;
     }
+
+    /**
+     * @return repetitive task panel
+     */
+    public RepTaskPanel getRepTaskPanel() {
+        return repTaskPanel;
+    }
+
+    /**
+     * @return non-repetitive task panel
+     */
+    public NonRepTaskPanel getNonRepTaskPanel() {
+        return nonRepTaskPanel;
+    }
 }

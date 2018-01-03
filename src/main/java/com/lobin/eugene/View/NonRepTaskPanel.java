@@ -116,4 +116,13 @@ public class NonRepTaskPanel implements TaskConstant {
     public void setActive(boolean active) {
         this.active.setSelected(active);
     }
+
+    /**
+     * Clear all field
+     */
+    public void clearField() {
+        title.setText("");
+        date.setValue(new Date());
+        active.setSelected(false);
+    }
 }

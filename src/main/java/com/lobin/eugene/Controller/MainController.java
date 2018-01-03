@@ -34,15 +34,14 @@ public class MainController implements TaskConstant {
         ArrayList<String> fileListName = new ArrayList<>();
         for (File aFileList : this.model.getFileList()) {
             if (aFileList.isFile()
-                    && aFileList.getName().endsWith(FILEEXTENSOPN)) {
+                    && aFileList.getName().endsWith(FILE_EXTENSION)) {
                 fileListName.add(aFileList.getName().
-                        substring(0,
-                                aFileList.getName().length() - DELETE_CHAR));
+                        substring(0, aFileList.getName().length() - DELETE_CHAR));
             }
         }
         this.model.setFileListName(fileListName);
         if (fileListName.size() > 0) {
-            this.model.setFile(new File(fileListName.get(0) + FILEEXTENSOPN));
+            this.model.setFile(new File(fileListName.get(0) + FILE_EXTENSION));
             this.model.loadFromFile();
         } else {
             this.guiController.setButtonEnabled(false);
@@ -53,7 +52,7 @@ public class MainController implements TaskConstant {
         createTaskListener(view.getCreateTaskPanel().getCreateTask());
         editTask(view.getStartPanel().getEdit());
         saveTask(view.getEditPanel().getSave());
-        removeTaskListener(view.getStartPanel().getRemove());
+        removeTask(view.getStartPanel().getRemove());
         showCalendar(view.getCalendarPanel().getShow());
         removeTaskListListener(view.getStartPanel().getDeleteList());
         addTaskListListener(view.getStartPanel().getAddNewList());
@@ -85,14 +84,18 @@ public class MainController implements TaskConstant {
                                             .getActiveTwo()
                             );
                             guiController
-                                    .successfullyMessage(SUCCESSFULLYADDED);
+                                    .successfullyMessage(SUCCESSFULLY_ADDED);
+                            guiController.clearCreateTaskField();
+                            view.getCardLayout().show(view.getContainer(), "Start form");
+                            model.loadFromFile();
+                            guiController.writeTasks(model.getTaskList());
                         } else {
                             guiController
-                                    .errorMessage(STARTDATEMUSTBEBEFORENDDATE);
+                                    .errorMessage(START_DATE_MUST_BE_BEFORE_END_DATE);
                         }
 
                     } else {
-                        guiController.errorMessage(EMPTYTITLE);
+                        guiController.errorMessage(EMPTY_TITLE);
                     }
                 } else {
                     if (view.getCreateTaskPanel()
@@ -100,9 +103,13 @@ public class MainController implements TaskConstant {
                         model.addTask(view.getCreateTaskPanel().getTaskTitleOne(),
                                 deleteSeconds(view.getCreateTaskPanel().getDateTime()),
                                 view.getCreateTaskPanel().getActiveOne());
-                        guiController.successfullyMessage(SUCCESSFULLYADDED);
+                        guiController.successfullyMessage(SUCCESSFULLY_ADDED);
+                        guiController.clearCreateTaskField();
+                        view.getCardLayout().show(view.getContainer(), "Start form");
+                        model.loadFromFile();
+                        guiController.writeTasks(model.getTaskList());
                     } else {
-                        guiController.errorMessage(EMPTYTITLE);
+                        guiController.errorMessage(EMPTY_TITLE);
                     }
                 }
             }
@@ -114,11 +121,11 @@ public class MainController implements TaskConstant {
      *
      * @param remove button
      */
-    private void removeTaskListener(JButton remove) {
+    private void removeTask(JButton remove) {
         remove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //                log.debug("Start processing");
+                log.debug("Start processing");
                 Task task;
                 int row;
                 String focus = guiController.getFocusTabled();
@@ -137,13 +144,14 @@ public class MainController implements TaskConstant {
                                                 .getValueAt(row, COLUMN_INDEX_TWO).toString()),
                                         Integer.parseInt(view.getStartPanel().getTableRep().getModel()
                                                 .getValueAt(row, COLUMN_INDEX_THREE).toString()));
-                                task.setActive((boolean) view.getStartPanel().getTableRep().getModel().getValueAt(row, COLUMN_INDEX_FOUR));
+                                task.setActive((boolean) view.getStartPanel().getTableRep().getModel()
+                                        .getValueAt(row, COLUMN_INDEX_FOUR));
                                 if (model.removeTask(task)) {
-                                    guiController.successfullyMessage(SUCCESSFULLYREMOVEING);
+                                    guiController.successfullyMessage(REMOVING_WAS_SUCCESSFUL);
                                     guiController.writeTasks(model.getTaskList());
                                 }
                             } else {
-                                guiController.errorMessage(EMPRTYROWFORREMOVE);
+                                guiController.errorMessage(EMPTY_ROW_FOR_REMOVE);
                             }
                             log.debug("done");
                             break;
@@ -160,13 +168,14 @@ public class MainController implements TaskConstant {
                                         .getValueAt(row, 0).toString(),
                                         DATE_FORMAT.parse(view.getStartPanel().getTableNonRep().getModel()
                                                 .getValueAt(row, 1).toString()));
-                                task.setActive((boolean) view.getStartPanel().getTableNonRep().getModel().getValueAt(row, 2));
+                                task.setActive((boolean) view.getStartPanel().getTableNonRep()
+                                        .getModel().getValueAt(row, 2));
                                 if (model.removeTask(task)) {
-                                    guiController.successfullyMessage(SUCCESSFULLYREMOVEING);
+                                    guiController.successfullyMessage(REMOVING_WAS_SUCCESSFUL);
                                     guiController.writeTasks(model.getTaskList());
                                 }
                             } else {
-                                guiController.errorMessage(EMPRTYROWFORREMOVE);
+                                guiController.errorMessage(EMPTY_ROW_FOR_REMOVE);
                             }
                             log.debug("Done");
                             break;
@@ -174,7 +183,7 @@ public class MainController implements TaskConstant {
                             log.error("Parse exception", ex);
                         }
                     default:
-                        guiController.errorMessage(EMPRTYROWFORREMOVE);
+                        guiController.errorMessage(EMPTY_ROW_FOR_REMOVE);
                         break;
                 }
             }
@@ -209,11 +218,11 @@ public class MainController implements TaskConstant {
                             text.append("\n");
                         }
                     } else {
-                        guiController.infoMessage(INFOCALENDAREMPTY);
+                        guiController.infoMessage(INFO_CALENDAR_EMPTY);
                         text.setText("");
                     }
                 } else {
-                    guiController.errorMessage(STARTDATEMUSTBEBEFORENDDATE);
+                    guiController.errorMessage(START_DATE_MUST_BE_BEFORE_END_DATE);
                 }
             }
         });
@@ -236,10 +245,10 @@ public class MainController implements TaskConstant {
                         );
                         taskWithNewInfo.setActive(view.getEditPanel().getNonRepTaskPanel().getActive());
                         if (model.editTask(taskForComparison, taskWithNewInfo)) {
-                            guiController.successfullyMessage(SUCCESSFULLYCHANGED);
+                            guiController.successfullyMessage(SUCCESSFULLY_CHANGED);
                         }
                     } else {
-                        guiController.errorMessage(EMPTYTITLE);
+                        guiController.errorMessage(EMPTY_TITLE);
                     }
 
                 } else {
@@ -253,13 +262,13 @@ public class MainController implements TaskConstant {
                                     view.getEditPanel().getRepTaskPanel().getInterval());
                             taskWithNewInfo.setActive(view.getEditPanel().getRepTaskPanel().getActive());
                             if (model.editTask(taskForComparison, taskWithNewInfo)) {
-                                guiController.successfullyMessage(SUCCESSFULLYCHANGED);
+                                guiController.successfullyMessage(SUCCESSFULLY_CHANGED);
                             }
                         } else {
-                            guiController.errorMessage(STARTDATEMUSTBEBEFORENDDATE);
+                            guiController.errorMessage(START_DATE_MUST_BE_BEFORE_END_DATE);
                         }
                     } else {
-                        guiController.errorMessage(EMPTYTITLE);
+                        guiController.errorMessage(EMPTY_TITLE);
                     }
 
                 }
@@ -283,28 +292,39 @@ public class MainController implements TaskConstant {
                         try {
                             row = view.getStartPanel().getTableRep().getSelectedRow();
                             if (row != -1) {
-                                taskForComparison = new Task(view.getStartPanel().getTableRep().getModel().getValueAt(row, COLUMN_INDEX_ZERO).toString(),
-                                        DATE_FORMAT.parse(view.getStartPanel().getTableRep().getModel().getValueAt(row, COLUMN_INDEX_ONE).toString()),
-                                        DATE_FORMAT.parse(view.getStartPanel().getTableRep().getModel().getValueAt(row, COLUMN_INDEX_TWO).toString()),
-                                        Integer.parseInt(view.getStartPanel().getTableRep().getModel().getValueAt(row, COLUMN_INDEX_THREE).toString()));
-                                taskForComparison.setActive((boolean) view.getStartPanel().getTableRep().getModel().getValueAt(row, COLUMN_INDEX_FOUR));
+                                taskForComparison = new Task(view.getStartPanel().getTableRep().getModel()
+                                        .getValueAt(row, COLUMN_INDEX_ZERO).toString(),
+                                        DATE_FORMAT.parse(view.getStartPanel().getTableRep().getModel()
+                                                .getValueAt(row, COLUMN_INDEX_ONE).toString()),
+                                        DATE_FORMAT.parse(view.getStartPanel().getTableRep().getModel()
+                                                .getValueAt(row, COLUMN_INDEX_TWO).toString()),
+                                        Integer.parseInt(view.getStartPanel().getTableRep().getModel()
+                                                .getValueAt(row, COLUMN_INDEX_THREE).toString()));
+                                taskForComparison.setActive((boolean) view.getStartPanel().getTableRep()
+                                        .getModel().getValueAt(row, COLUMN_INDEX_FOUR));
 
-                                view.getEditPanel().getRepTaskPanel().setTitle(taskForComparison.getTitle());
-                                view.getEditPanel().getRepTaskPanel().setStartTime(taskForComparison.getStartTime());
-                                view.getEditPanel().getRepTaskPanel().setEndTime(taskForComparison.getEndTime());
-                                view.getEditPanel().getRepTaskPanel().setInterval(taskForComparison.getRepeatInterval());
-                                view.getEditPanel().getRepTaskPanel().setActive(taskForComparison.isActive());
+                                view.getEditPanel().getRepTaskPanel()
+                                        .setTitle(taskForComparison.getTitle());
+                                view.getEditPanel().getRepTaskPanel()
+                                        .setStartTime(taskForComparison.getStartTime());
+                                view.getEditPanel().getRepTaskPanel()
+                                        .setEndTime(taskForComparison.getEndTime());
+                                view.getEditPanel().getRepTaskPanel()
+                                        .setInterval(taskForComparison.getRepeatInterval());
+                                view.getEditPanel().getRepTaskPanel()
+                                        .setActive(taskForComparison.isActive());
                                 view.getCardLayout().show(view.getContainer(), "Edit task");
                                 view.getEditPanel().getEditNonRepTask().setVisible(false);
                                 view.getEditPanel().getEditRepTask().setVisible(true);
                                 break;
                             } else {
-                                guiController.errorMessage(EPRTYROWFOREDIT);
+                                guiController.errorMessage(EMPTY_ROW_FOR_EDIT);
                             }
 
                         } catch (ParseException ex) {
                             ex.printStackTrace();
                         }
+                        break;
                     }
                     case "Non": {
                         try {
@@ -314,25 +334,29 @@ public class MainController implements TaskConstant {
                                         .getValueAt(row, 0).toString(),
                                         DATE_FORMAT.parse(view.getStartPanel().getTableNonRep().getModel()
                                                 .getValueAt(row, 1).toString()));
-                                taskForComparison.setActive((boolean) view.getStartPanel().getTableNonRep().getModel().getValueAt(row, 2));
+                                taskForComparison.setActive((boolean) view.getStartPanel()
+                                        .getTableNonRep().getModel().getValueAt(row, 2));
 
-                                view.getEditPanel().getNonRepTaskPanel().setTitle(taskForComparison.getTitle());
-                                view.getEditPanel().getNonRepTaskPanel().setDate(taskForComparison.getTime());
-                                view.getEditPanel().getNonRepTaskPanel().setActive(taskForComparison.isActive());
+                                view.getEditPanel().getNonRepTaskPanel()
+                                        .setTitle(taskForComparison.getTitle());
+                                view.getEditPanel().getNonRepTaskPanel()
+                                        .setDate(taskForComparison.getTime());
+                                view.getEditPanel().getNonRepTaskPanel()
+                                        .setActive(taskForComparison.isActive());
                                 view.getCardLayout().show(view.getContainer(), "Edit task");
                                 view.getEditPanel().getEditRepTask().setVisible(false);
                                 view.getEditPanel().getEditNonRepTask().setVisible(true);
                                 break;
                             } else {
-                                guiController.errorMessage(EPRTYROWFOREDIT);
+                                guiController.errorMessage(EMPTY_ROW_FOR_EDIT);
                             }
-
                         } catch (ParseException ex) {
                             ex.printStackTrace();
                         }
+                        break;
                     }
                     default:
-                        guiController.errorMessage(EPRTYROWFOREDIT);
+                        guiController.errorMessage(EMPTY_ROW_FOR_EDIT);
                         break;
                 }
             }
@@ -377,18 +401,19 @@ public class MainController implements TaskConstant {
             public void actionPerformed(ActionEvent e) {
                 String name = (String) view.getStartPanel().getTaskList().getSelectedItem();
                 if (name != null) {
-                    int delete = guiController.deleteMessage(REMOVETASKLIST);
+                    int delete = guiController.deleteMessage(REMOVE_TASK_LIST);
                     if (delete == 0) {
-                        if (model.removeFileFromList(name + FILEEXTENSOPN)) {
-                            guiController.successfullyMessage(TASKLISTWASDELETED);
+                        if (model.removeFileFromList(name + FILE_EXTENSION)) {
+                            model.removeFileNameFromList(name);
+                            guiController.successfullyMessage(TASK_LIST_WAS_DELETED);
                             view.getStartPanel().getTaskList().removeItem(name);
                         } else {
-                            guiController.errorMessage(TASKLISTWASNOTDELET);
+                            guiController.errorMessage(TASK_LIST_WAS_NOT_DELETED);
                         }
                     }
 
                 } else {
-                    guiController.infoMessage(LISTEMPTY);
+                    guiController.infoMessage(LIST_EMPTY);
                 }
             }
         });
@@ -403,24 +428,24 @@ public class MainController implements TaskConstant {
         addList.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String name = guiController.inputDialog(ADDNEWTASKLIST);
+                String name = guiController.inputDialog(ADD_NEW_TASK_LIST);
                 if (name == null || name.isEmpty()) {
-                    guiController.errorMessage(FILENAMECANTBEEMPTY);
+                    guiController.errorMessage(FILE_NAME_CANT_BE_EMPTY);
                 } else {
                     if (name.matches("^[a-zA-Z0-9\\s]*$")) {
                         if (model.getFileListName().contains(name)) {
-                            guiController.errorMessage(THISFILENAMEBEUSED);
+                            guiController.errorMessage(THIS_FILE_NAME_BE_USED);
                         } else {
                             if (model.createNewFile(name)) {
                                 view.getStartPanel().getTaskList().addItem(name);
-                                guiController.successfullyMessage(TASKLISTWASCREATED);
+                                guiController.successfullyMessage(TASK_LIST_WAS_CREATED);
                                 guiController.setButtonEnabled(true);
                             } else {
-                                guiController.errorMessage(TASKLISTWASNOTCREATED);
+                                guiController.errorMessage(TASK_LIST_WAS_NOT_CREATED);
                             }
                         }
                     } else {
-                        guiController.errorMessage(FILENAMEONLYLETTERSANDNUBMERS);
+                        guiController.errorMessage(NAME_MUST_CONSIST_ONLY_OF_NUMBERS_AND_LETTERS);
                     }
                 }
             }
@@ -437,7 +462,8 @@ public class MainController implements TaskConstant {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (view.getStartPanel().getTaskList().getSelectedItem() != null) {
-                    model.setFile(new File(view.getStartPanel().getTaskList().getSelectedItem() + ".bin"));
+                    model.setFile(new File(view.getStartPanel()
+                            .getTaskList().getSelectedItem() + ".bin"));
                     model.loadFromFile();
                     guiController.writeTasks(model.getTaskList());
                 } else {

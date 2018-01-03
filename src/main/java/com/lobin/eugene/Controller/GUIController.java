@@ -235,4 +235,12 @@ class GUIController implements TaskConstant {
         view.getStartPanel().getCalendar().setEnabled(state);
         view.getStartPanel().getEdit().setEnabled(state);
     }
+
+    /**
+     * Clear repetitive and non-repetitive task filed
+     */
+    void clearCreateTaskField(){
+        view.getCreateTaskPanel().getRepTaskPanel().clearField();
+        view.getCreateTaskPanel().getNonRepTaskPanel().clearField();
+    }
 }

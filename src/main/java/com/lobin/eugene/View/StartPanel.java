@@ -29,7 +29,7 @@ public class StartPanel implements TaskConstant{
     private JButton bCalendar = new JButton("Calendar");
     private JButton bRemove = new JButton("Remove task");
     private JTable jTableRep = createTable(new Object[]{"Title",
-            "Start time", "End time", "Interval", "Active"});
+            "Start time", "End time", "Interval(sec)", "Active"});
     private JTable jTableNonRep = createTable(new Object[]{"Title",
             "Date", "Active"});
 
