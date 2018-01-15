@@ -24,12 +24,12 @@ import java.io.IOException;
  */
 
 class GUIController implements TaskConstant {
-    private static final Logger LOG = Logger.getLogger(MainController.class);
+    private static final Logger LOG = Logger.getLogger(MainController.class.getName());
     private View view;
     private String focusTabled = "noSelect";
     private Model model;
 
-    GUIController(View viewStart, Model model) {
+    public GUIController(View viewStart, Model model) {
         view = viewStart;
         this.model = model;
         view.getStartPanel().addCreateTaskActionListener(new ActionListener() {
@@ -124,7 +124,7 @@ class GUIController implements TaskConstant {
     /**
      * load tasks from file
      */
-    void loafFromFile() {
+    public void loafFromFile() {
         try {
             model.loadFromFile();
         } catch (IOException ex) {
@@ -135,14 +135,14 @@ class GUIController implements TaskConstant {
     /**
      * @return focused tablw
      */
-    String getFocusTabled() {
+    public String getFocusTabled() {
         return focusTabled;
     }
 
     /**
      * @param arr write this task list in main table
      */
-    void writeTasks(ArrayTaskList arr) {
+    public void writeTasks(ArrayTaskList arr) {
         clearTable();
         //заполняем таблицы
         DefaultTableModel modelRep = (DefaultTableModel) view.
@@ -167,7 +167,7 @@ class GUIController implements TaskConstant {
     /**
      * clear all table
      */
-    void clearTable() {
+    public void clearTable() {
         DefaultTableModel model = (DefaultTableModel) view.getStartPanel().
                 getTableNonRep().getModel();
         model.setRowCount(0);
@@ -181,7 +181,7 @@ class GUIController implements TaskConstant {
      *
      * @param text text for message dialog
      */
-    void successfullyMessage(String text) {
+    public void successfullyMessage(String text) {
         JOptionPane.showMessageDialog(null, text,
                 "Successfully", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -191,7 +191,7 @@ class GUIController implements TaskConstant {
      *
      * @param text text for message dialog
      */
-    void errorMessage(String text) {
+    public void errorMessage(String text) {
         JOptionPane.showMessageDialog(null,
                 "Error: " + text, "Error",
                 JOptionPane.ERROR_MESSAGE);
@@ -202,7 +202,7 @@ class GUIController implements TaskConstant {
      *
      * @param text text for message dialog
      */
-    void infoMessage(String text) {
+    public void infoMessage(String text) {
         JOptionPane.showMessageDialog(null, text,
                 "Information", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -213,7 +213,7 @@ class GUIController implements TaskConstant {
      * @param text text for confirm dialog
      * @return yes or no option
      */
-    int deleteMessage(String text) {
+    public int deleteMessage(String text) {
         return JOptionPane.showConfirmDialog(null,
                 "Confirm deletion?", text,
                 JOptionPane.YES_NO_OPTION);
@@ -225,7 +225,7 @@ class GUIController implements TaskConstant {
      * @param text text for input dialog
      * @return task list name
      */
-    String inputDialog(String text) {
+    public String inputDialog(String text) {
         return JOptionPane.showInputDialog(null,
                 "Enter new task list name", text,
                 JOptionPane.PLAIN_MESSAGE);
@@ -234,21 +234,21 @@ class GUIController implements TaskConstant {
     /**
      * @return view
      */
-    View getView() {
+    public View getView() {
         return view;
     }
 
     /**
      * @return model
      */
-    Model getModel() {
+    public Model getModel() {
         return model;
     }
 
     /**
      * @param state param for all button in start panel
      */
-    void setButtonEnabled(boolean state) {
+    public void setButtonEnabled(boolean state) {
         view.getStartPanel().getCreateNewTask().setEnabled(state);
         view.getStartPanel().getRemove().setEnabled(state);
         view.getStartPanel().getCalendar().setEnabled(state);
@@ -258,7 +258,7 @@ class GUIController implements TaskConstant {
     /**
      * Clear repetitive and non-repetitive task filed
      */
-    void clearCreateTaskField() {
+    public void clearCreateTaskField() {
         view.getCreateTaskPanel().getRepTaskPanel().clearField();
         view.getCreateTaskPanel().getNonRepTaskPanel().clearField();
     }

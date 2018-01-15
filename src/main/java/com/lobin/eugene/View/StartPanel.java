@@ -34,7 +34,7 @@ public class StartPanel implements TaskConstant {
     private JTable jTableNonRep = createTable(new Object[]{"Title",
             "Date", "Active"});
 
-    StartPanel() {
+    public StartPanel() {
         JLabel lTaskList = new JLabel("Task list");
         JLabel lRepTask = new JLabel("Repetitive tasks");
         JLabel lNonRepTask = new JLabel("Non-repetitive tasks");

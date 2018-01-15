@@ -276,7 +276,7 @@ public class TaskIO {
     }
 
     private static int getRepeatInterval(String s) {
-        s = s.substring(s.lastIndexOf("["), s.lastIndexOf("]"));
+        s = s.substring(s.lastIndexOf("["), s.lastIndexOf("]") + 1);
         StringBuilder sb = new StringBuilder();
         int[] array = {-1, -1, -1, -1};
         int[] afterArray = {0, 0, 0, 0};
@@ -305,7 +305,7 @@ public class TaskIO {
                 count--;
             }
         }
-        for (i = 0; i < afterArray.length - 1; i++) {
+        for (i = 0; i < afterArray.length; i++) {
             result += afterArray[i] * TIME[i];
         }
         return result;
@@ -333,10 +333,10 @@ public class TaskIO {
      * Write task in file in text format
      * @throw IOException if stream to file cannot be read to or closed.
      */
-    public static void readText(TaskList tasks, File file) {
+    public static void readText(TaskList tasks, File file) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             read(tasks, br);
-        } catch (IOException | ParseException ex) {
+        } catch (ParseException ex) {
             ex.printStackTrace();
         }
     }

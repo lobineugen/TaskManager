@@ -1,5 +1,6 @@
 package com.lobin.eugene.model;
 
+import com.lobin.eugene.Controller.TaskConstant;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -16,28 +17,40 @@ import java.util.SortedMap;
  * @version 1.1 29 Nov 2017
  */
 
-public class Model {
-    private static final Logger LOG = Logger.getLogger(Model.class);
+public class Model implements TaskConstant {
+    private static final Logger LOG = Logger.getLogger(Model.class.getName());
     private ArrayTaskList<Task> taskList = new ArrayTaskList<>();
-    private File dir = new File(".");
-    private File[] fileList = dir.listFiles();
+    private File dir = new File("data");
+    private File[] fileList;
     private ArrayList<String> fileListName = new ArrayList<>();
     private File file;
 
+
+    public Model() {
+        System.setProperty("user.dir", "data");
+        if (dir.mkdir()) {
+            LOG.info("Folder was created");
+        } else {
+            LOG.info("Folder not wast created");
+        }
+        fileList = dir.listFiles();
+    }
+
     /**
      * load tasks into task list form file
+     *
      * @throws IOException if stream to file cannot be written to or closed.
      */
-    public void loadFromFile() throws IOException {
+    public void loadFromFile() throws StringIndexOutOfBoundsException, IOException {
         taskList.clear();
-        TaskIO.readBinary(taskList, file);
+        TaskIO.readText(taskList, file);
     }
 
     /**
      * write task list into file
      */
     private void writeInFile() {
-        TaskIO.writeBinary(taskList, file);
+        TaskIO.writeText(taskList, file);
     }
 
     /**
@@ -149,8 +162,14 @@ public class Model {
      * @return true if file be deleted
      */
     public boolean removeFileFromList(String fileName) {
-        File file = new File(fileName);
-        return file.delete();
+        File file = new File(dir + File.separator + fileName);
+        boolean removed = file.delete();
+        if (removed) {
+            LOG.info("File " + fileName + " was removed");
+        } else {
+            LOG.info("File " + fileName + " was not removed");
+        }
+        return removed;
     }
 
     /**
@@ -165,11 +184,9 @@ public class Model {
      * @return true if file be created
      */
     public boolean createNewFile(String fileName) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("File name: " + fileName);
-        }
+        LOG.info("New file was created: " + fileName);
         try {
-            if (new File(fileName + ".bin").createNewFile()) {
+            if (new File(dir + File.separator + fileName + FILE_EXTENSION).createNewFile()) {
                 fileListName.add(fileName);
                 return true;
             }
@@ -177,7 +194,6 @@ public class Model {
             LOG.error("IOException", e);
         }
         return false;
-
     }
 
     /**

@@ -24,7 +24,7 @@ public class EditPanel {
     private JButton bSave = new JButton("Save");
     private JButton bCancel = new JButton("Back ");
 
-    EditPanel() {
+    public EditPanel() {
         GroupLayout glEdit = createGroupLayout(editPanel);
 
         pEditRepTask = repTaskPanel.getPanel();

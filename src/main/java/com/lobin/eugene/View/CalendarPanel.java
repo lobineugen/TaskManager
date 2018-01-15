@@ -36,7 +36,7 @@ public class CalendarPanel implements TaskConstant {
     /**
      * Constructor created calendar panel
      */
-    CalendarPanel() {
+    public CalendarPanel() {
         GroupLayout glCalendar = createGroupLayout(calendarPanel);
 
         JScrollPane textArea = new JScrollPane(jTextArea);

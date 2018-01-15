@@ -30,7 +30,7 @@ public class NonRepTaskPanel implements TaskConstant {
     private JRadioButton active = new JRadioButton();
 
 
-    NonRepTaskPanel() {
+    public NonRepTaskPanel() {
         GroupLayout groupLayout = createGroupLayout(panel);
 
         setDateEditor(date);

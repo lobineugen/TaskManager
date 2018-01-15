@@ -35,7 +35,7 @@ public class RepTaskPanel implements TaskConstant {
     private JFormattedTextField interval;
     private JRadioButton active = new JRadioButton();
 
-    RepTaskPanel() {
+    public RepTaskPanel() {
         GroupLayout groupLayout =  createGroupLayout(panel);
 
         NumberFormat format = NumberFormat.getIntegerInstance();

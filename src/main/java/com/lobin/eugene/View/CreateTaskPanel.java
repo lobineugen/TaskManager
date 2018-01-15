@@ -34,7 +34,7 @@ public class CreateTaskPanel {
     private NonRepTaskPanel nonRepTaskPanel = new NonRepTaskPanel();
 
 
-    CreateTaskPanel() {
+    public CreateTaskPanel() {
         GroupLayout glCreateTask = createGroupLayout(createTaskPanel);
 
         pRepTask = repTaskPanel.getPanel();

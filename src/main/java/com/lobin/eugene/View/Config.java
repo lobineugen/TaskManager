@@ -18,7 +18,7 @@ class Config implements TaskConstant {
      * @param panel for creating group layout
      * @return group layout with with configuration
      */
-    static GroupLayout createGroupLayout(JPanel panel) {
+    public static GroupLayout createGroupLayout(JPanel panel) {
         GroupLayout layout = new GroupLayout(panel);
         panel.setLayout(layout);
         layout.setAutoCreateGaps(true);
@@ -31,7 +31,7 @@ class Config implements TaskConstant {
      *
      * @param spinner for which will be installed
      */
-    static void setDateEditor(JSpinner spinner) {
+    public static void setDateEditor(JSpinner spinner) {
         spinner.setEditor(new JSpinner.DateEditor(spinner,
                 DATE_FORMAT.toPattern()));
     }

@@ -30,8 +30,9 @@ public interface TaskConstant {
     String TASK_LIST_WAS_NOT_CREATED = "Task list wast not created";
     String NAME_MUST_CONSIST_ONLY_OF_NUMBERS_AND_LETTERS = "The name must" +
             " consist only of numbers and letters";
-    String FILE_EXTENSION = ".bin";
-    String FILE_MUST_BE_BIN_FORMAT = "File must be .bin format!";
+    String FILE_EXTENSION = ".txt";
+    String DIR_FOR_SAVE_FILE = "data";
+    String FILE_MUST_BE_TXT_FORMAT = "File must be .txt format!";
     String TASK_TITLE = "Task Manager";
     String INCORRECT_CONTENTS = "The contents of the file are incorrect";
     int COLUMN_INDEX_ZERO = 0;
